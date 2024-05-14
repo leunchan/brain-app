@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moonje_mate/screen/chat_screen.dart';
+import 'package:moonje_mate/screen/clientinfo_screen.dart';
 import 'package:moonje_mate/screen/login_screen.dart';
 import 'package:moonje_mate/screen/main_screen.dart';
 import 'package:moonje_mate/screen/register_screen.dart';
@@ -46,7 +47,7 @@ class MyApp extends StatelessWidget {
         '/chat': (context) => ChatScreen(),
         '/setting': (context) => SettingScreen(),
         '/storage': (context) => StorageScreen(),
-
+        '/client': (context) => ClientInfoScreen()
       },
 
       // 다른 방법으로 라우트 선언을 한 것
