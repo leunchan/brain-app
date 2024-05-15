@@ -12,6 +12,9 @@ const apiKey = '';
 const apiUrl = 'https://api.openai.com/v1/chat/completions';
 final supabase = Supabase.instance.client;
 
+// 객관식 주관식 기능 추가 예정
+// 난이도 기능 추가 예정
+
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key}) : super(key: key);
 
@@ -210,7 +213,7 @@ class _ChatScreenState extends State<ChatScreen> {
       },
       body: jsonEncode(
         {
-          "model": "gpt-4-turbo",
+          "model": "gpt-4o",
           'messages': [
             {
               "role": "system",
@@ -297,7 +300,9 @@ class ChatMessage extends StatelessWidget {
                 isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
             children: [
               CircleAvatar(
+                backgroundColor: Colors.transparent,
                 backgroundImage: isUser ? NetworkImage(profileImageUrl) : AssetImage(profileImageUrl) as ImageProvider<Object>,
+                radius: 20,
               ),
               const SizedBox(width: 5),
               Text(
@@ -332,7 +337,7 @@ class ChatMessage extends StatelessWidget {
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black,
-                    padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(6)),
                   ),

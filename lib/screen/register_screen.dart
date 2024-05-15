@@ -33,7 +33,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CommonAppBar(
-        title: 'Food PICK 가입하기',
+        title: '문제메이트 가입하기',
         isLeading: true,
       ),
       body: SingleChildScrollView(
