@@ -30,8 +30,8 @@ class _MainScreenState extends State<MainScreen> {
         showSelectedLabels: false,
         showUnselectedLabels: false,
         backgroundColor: Colors.black,
-        selectedItemColor: Color(0xff14ff00),
-        unselectedItemColor: Colors.white,
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Color(0xffB0B2B5),
         onTap: (index) {
           setState(() {
             _selectedIndex = index;
