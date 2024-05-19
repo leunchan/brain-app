@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moonje_mate/model/user.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../common/snackbar_util.dart';
@@ -78,29 +79,39 @@ class _LoginScreenState extends State<LoginScreen> {
                     text: '로그인',
                     backgroundColor: Colors.black,
                     textColor: Colors.white,
-                    onPressed: () async {
-                      // 로그인
-                      String emailValue = _emailController.text;
-                      String passwordValue = _passwordController.text;
+                      onPressed: () async {
+                        // 로그인
+                        String emailValue = _emailController.text;
+                        String passwordValue = _passwordController.text;
 
-                      // 유효성 검사 체크
-                      if (!formKey.currentState!.validate()) {
-                        return;
+                        // 유효성 검사 체크
+                        if (!formKey.currentState!.validate()) {
+                          return;
+                        }
+
+                        // 이메일과 비밀번호로 로그인 시도
+                        bool isLoginSuccess = await loginWithEmail(emailValue, passwordValue);
+
+                        if (!context.mounted) return;
+                        if (!isLoginSuccess) {
+                          showSnackBar(context, '로그인을 실패하였습니다');
+                          return;
+                        }
+
+                        // 사용자 정보 가져오기
+                        UserModel? userInfo = await getUserInfo(emailValue);
+                        // 회원탈퇴 시 authentication에서 지워지는 걸 못해서 일단 이렇게 구현해뒀어 차차 구현해볼게
+                        // 닉네임 변수 확인
+                        if (userInfo == null || userInfo.nickname == null || userInfo.nickname.isEmpty) {
+                          // 사용자 정보가 없거나 닉네임 변수가 비어 있는 경우 로그인 실패 처리
+                          showSnackBar(context, '로그인을 실패하였습니다. 닉네임이 없습니다.');
+                          return;
+                        }
+
+                        // 로그인을 성공하여 메인으로 이동
+                        // 로그인 화면을 죽여주고 가야하기때문에 popAndPushNamed 사용
+                        Navigator.popAndPushNamed(context, '/main');
                       }
-
-                      bool isLoginSuccess = await loginWithEmail(
-                          emailValue, passwordValue);
-
-                      if (!context.mounted) return;
-                      if (!isLoginSuccess) {
-                        showSnackBar(context, '로그인을 실패하였습니다');
-                        return;
-                      }
-
-                      // 로그인을 성공하여 메인으로 이동
-                      // 로그인 화면을 죽여주고 가야하기때문에 popAndPushNamed 사용
-                      Navigator.popAndPushNamed(context, '/main');
-                    },
                   ),
                 ),
 
@@ -127,7 +138,21 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+  Future<UserModel?> getUserInfo(String email) async {
+    // Supabase 클라이언트 생성
+    final supabaseClient = SupabaseClient('https://sdncltappldozngyrnhu.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkbmNsdGFwcGxkb3puZ3lybmh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTE3MTM2MjAsImV4cCI6MjAyNzI4OTYyMH0.g2UQuA4z6T8_KUoAJve-uI4Ps31cD8ZD0s9vKQtTDx0');
 
+    // 사용자 정보 가져오기
+    final response = await supabaseClient.from('user')
+        .select()
+        .eq('email', email)
+        .single();
+
+    // 가져온 사용자 정보를 UserInfo 모델로 변환하여 반환
+      // 정상적으로 사용자 정보를 가져온 경우
+      final userData = response as Map<String, dynamic>;
+      return UserModel.fromJson(userData);
+  }
   inputEmailValidator(value) {
     /// 이메일 필드 검증 함수
     if (value.isEmpty) {

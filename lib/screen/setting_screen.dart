@@ -49,9 +49,10 @@ class _SettingScreenState extends State<SettingScreen> {
                       : null, // 기본 이미지는 설정하지 않음
                   child: profileImgUrl == null
                       ? Image.asset(
-                    'assets/default_user_img.png',
-                    width: 120,
-                    height:120,) // 기본 이미지로 사용할 아이콘
+                          'assets/default_user_img.png',
+                          width: 120,
+                          height: 120,
+                        ) // 기본 이미지로 사용할 아이콘
                       : null, // 프로필 이미지가 있을 경우에는 아이콘 표시하지 않음
                   radius: 80,
                 ),
@@ -82,48 +83,103 @@ class _SettingScreenState extends State<SettingScreen> {
                     onPressed: () {
                       showCupertinoModalPopup<void>(
                         context: context,
-                        builder: (BuildContext context) =>
-                            CupertinoAlertDialog(
-                              title: const Text('알림'),
-                              content: const Text('로그아웃하시겠습니까?'),
-                              actions: <CupertinoDialogAction>[
-                                CupertinoDialogAction(
-                                  isDefaultAction: true,
-                                  onPressed: () => Navigator.pop(context),
-                                  child: const Text('아니오'),
-                                ),
-                                CupertinoDialogAction(
-                                  isDestructiveAction: true,
-                                  onPressed: () {
-                                    Navigator.of(context).pushAndRemoveUntil(
-                                        CupertinoPageRoute(
-                                            builder: (context) => MyApp()),
-                                            (route) => false
-                                    );
-                                  },
-                                  child: Text('예'),
-                                ),
-                              ],
+                        builder: (BuildContext context) => CupertinoAlertDialog(
+                          title: const Text('알림'),
+                          content: const Text('로그아웃하시겠습니까?'),
+                          actions: <CupertinoDialogAction>[
+                            CupertinoDialogAction(
+                              isDefaultAction: true,
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text('아니오'),
                             ),
+                            CupertinoDialogAction(
+                              isDestructiveAction: true,
+                              onPressed: () {
+                                Navigator.of(context).pushAndRemoveUntil(
+                                    CupertinoPageRoute(
+                                        builder: (context) => MyApp()),
+                                    (route) => false);
+                              },
+                              child: Text('예'),
+                            ),
+                          ],
+                        ),
                       );
                     },
                   ),
                 ),
                 const SizedBox(height: 44),
                 // 탈퇴 버튼 ---> 아직 구현못했어..
-                Container(
-                  width: double.infinity,
-                  height: 52,
-                  child: ElevatedButtionCustom(
-                    text: ' ➡️ 탈퇴',
-                    backgroundColor: Color(0xff979797),
-                    textColor: Colors.black,
-                    onPressed: () async {
-                      // 회원 탈퇴 기능 수행
-                    },
-                  ),
-                ),
-              ],
+            Container(
+              width: double.infinity,
+              height: 52,
+              child: ElevatedButtionCustom(
+                text: '➡️ 탈퇴',
+                backgroundColor: Color(0xff979797),
+                textColor: Colors.black,
+                onPressed: () async {
+                  // 1. 확인 다이얼로그 표시
+                  showCupertinoModalPopup<void>(
+                    context: context,
+                    builder: (BuildContext context) => CupertinoAlertDialog(
+                      title: const Text('알림'),
+                      content: const Text('회원탈퇴 하시겠습니까?'),
+                      actions: <CupertinoDialogAction>[
+                        CupertinoDialogAction(
+                          isDefaultAction: true,
+                          onPressed: () => Navigator.pop(context),
+                          // 아니오를 선택하면 다이얼로그를 닫습니다.
+                          child: const Text('아니오'),
+                        ),
+                        CupertinoDialogAction(
+                          isDestructiveAction: true,
+                          onPressed: () async {
+                            final currentUserID = Supabase.instance.client.auth.currentUser?.email; // user ID (UUID) 가져오기
+
+                            if (currentUserID != null) {
+                              try {
+                                // 1. 사용자의 인증 정보를 삭제합니다.
+                                await Supabase.instance.client.auth.signOut();
+
+                                // 2. auth.users 테이블에서 사용자를 삭제합니다.
+                                final response = await Supabase.instance.client
+                                    .from('user')
+                                    .delete()
+                                    .eq('email', currentUserID); // execute() 호출
+
+                                if (response.error != null) {
+                                  // 오류 처리
+                                  print('Failed to delete user from auth.users: ${response.error!.message}');
+                                } else {
+                                  // 사용자 데이터 삭제 성공 시 UI 업데이트
+
+                                }
+                              } catch (e) {
+                                // 예외 처리
+                                print('An error occurred during sign out or user deletion: $e');
+                              }
+                            } else {
+                              print('No current user to delete');
+                            }
+
+                            // 다이얼로그 닫기
+                            Navigator.pop(context);
+                            Navigator.of(context).pushAndRemoveUntil(
+                              CupertinoPageRoute(builder: (context) => MyApp()),
+                                  (route) => false,
+                            );
+                          },
+                          child: const Text('예'),
+
+                        ),
+
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+            ],
             ),
           );
         },

@@ -1,6 +1,8 @@
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ClientInfoScreen extends StatefulWidget {
@@ -23,6 +25,12 @@ class _ClientInfoState extends State<ClientInfoScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('회원정보 수정'),
+        leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+        ),
       ),
       body: StreamBuilder<List<Map<String, dynamic>>>(
         stream: Supabase.instance.client
@@ -62,12 +70,11 @@ class _ClientInfoState extends State<ClientInfoScreen> {
                   'assets/default_user_img.png',
                   width: 120,
                   height: 120,
-          ),
+                ),
                 SizedBox(height: 20.0),
                 ElevatedButton(
                   onPressed: () async {
-                    final pickedFile =
-                    await _picker.pickImage(source: ImageSource.gallery);
+                    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
                     if (pickedFile != null) {
                       setState(() {
                         profileImg = File(pickedFile.path);
@@ -104,6 +111,20 @@ class _ClientInfoState extends State<ClientInfoScreen> {
                     if (profileImg != null) {
                       final nowTime = DateTime.now();
                       final imgFile = profileImg!;
+
+                      // 사용자가 이미지를 가지고 있는지 확인
+                      if (user['profile_url'] != null) {
+                        // URL에서 파일 이름을 추출
+                        final imageUrl = user['profile_url'];
+                        final List<String> parts = imageUrl.split('/');
+                        final fileNameWithQueryParams = parts.last; // 파일 이름과 쿼리 매개변수를 포함한 부분
+                        final fileName = Uri.decodeFull(fileNameWithQueryParams.split('?').first); // 쿼리 매개변수 제외한 파일 이름 부분
+
+                        // 기존 이미지를 삭제
+                        await Supabase.instance.client.storage
+                            .from('Brain')
+                            .remove(['profiles/$fileName']);
+                      }
                       // 이미지 파일 업로드
                       final response = await Supabase.instance.client.storage
                           .from('Brain')
@@ -121,9 +142,10 @@ class _ClientInfoState extends State<ClientInfoScreen> {
                           .from('Brain')
                           .getPublicUrl(
                           'profiles/${user['id']}_$nowTime.jpg');
-                    }
-                    else {
 
+                      setState(() {
+                        _profilePictureUrl = imageUrl;
+                      });
                     }
 
                     final response = await Supabase.instance.client!.from(
@@ -134,7 +156,7 @@ class _ClientInfoState extends State<ClientInfoScreen> {
                       'profile_url': imageUrl ?? _profilePictureUrl,
                     }).eq('id', user['id']);
 
-                    if (response.errorOrNull != null) {
+                    if (response != null && response.errorOrNull != null) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
@@ -143,31 +165,28 @@ class _ClientInfoState extends State<ClientInfoScreen> {
                         ),
                       );
                     } else {
-                      setState(() {
-                        _profilePictureUrl = imageUrl ?? _profilePictureUrl;
-                      });
                       showDialog(
                         context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('Success'),
-                            content:
-                            Text('Profile updated successfully!'),
+                        builder: (BuildContext dialogContext) {
+                          return CupertinoAlertDialog(
+                            title: Text('회원정보 변경'),
+                            content: Text('회원 정보 수정완료'),
                             actions: <Widget>[
                               TextButton(
                                 onPressed: () {
-                                  Navigator.of(context).pop();
+                                  Navigator.of(dialogContext).pop();
                                 },
-                                child: Text('Close'),
+                                child: Text('닫기'),
                               ),
                             ],
                           );
                         },
                       );
-                    };
+                    }
                   },
-                  child: Text('프로필 변경'),
+                  child: Text('회원정보 변경'),
                 ),
+
               ],
             ),
           );
