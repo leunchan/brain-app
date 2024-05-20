@@ -3,10 +3,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:moonje_mate/model/user.dart';
+import 'package:moonje_mate/widget/buttons.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:intl/intl.dart';
 
 import '../model/problem.dart';
+import '../widget/text_fields.dart';
+import '../widget/texts.dart';
 
 const apiKey = '';
 const apiUrl = 'https://api.openai.com/v1/chat/completions';
@@ -130,7 +133,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       child: TextField(
                         controller: _messageController,
                         decoration: InputDecoration(
-                          hintText: '생성하고싶은 문제 키워드를 입력하세요.',
+                          hintText: '생성하고싶은 문제 키워드 입력',
                         ),
                       ),
                     ),
@@ -301,7 +304,9 @@ class ChatMessage extends StatelessWidget {
             children: [
               CircleAvatar(
                 backgroundColor: Colors.transparent,
-                backgroundImage: isUser ? NetworkImage(profileImageUrl) : AssetImage(profileImageUrl) as ImageProvider<Object>,
+                backgroundImage: isUser
+                    ? NetworkImage(profileImageUrl)
+                    : AssetImage(profileImageUrl) as ImageProvider<Object>,
                 radius: 20,
               ),
               const SizedBox(width: 5),
@@ -350,72 +355,91 @@ class ChatMessage extends StatelessWidget {
 }
 
 Future<void> _showSaveDialog(BuildContext context, String content) async {
+  final TextEditingController _typeController = TextEditingController();
+  final TextEditingController _tagController = TextEditingController();
   String currentDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
-  String? problemType = ''; // problemType 변수를 선언하고 초기화
-  String? problemtag = '';
 
   // 다이얼로그 표시
-  problemType = await showDialog<String>(
+  await showDialog<String>(
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Text('저장하기 - $currentDate'), // 오늘 날짜 표시
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // 문제 유형 선택
-            TextField(
-              decoration: InputDecoration(
-                labelText: '문제 유형을 작성하세요.',
-                hintText: 'ex) 객관식 or 주관식',
+        title: Text('$currentDate'), // 오늘 날짜 표시
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // 문제 유형 선택
+              SectionText(text: '문제 유형', textColor: Colors.black),
+              const SizedBox(height: 8),
+              TextFormFieldCustom(
+                hintText: '객관식 or 주관식',
+                isPasswordField: false,
+                isReadOnly: false,
+                keyboardType: TextInputType.text,
+                textInputAction: TextInputAction.next,
+                validator: (value) => inputTypeValidator(value),
+                controller: _typeController,
               ),
-              onChanged: (value) {
-                problemType = value;
-              },
-            ),
-            const SizedBox(height: 8), // 각 텍스트 필드 사이의 간격
-            // 문제 태그 선택
-            TextField(
-              decoration: InputDecoration(
-                labelText: '문제 태그를 작성하세요.',
-                hintText: 'ex) 산업공학입문',
+              const SizedBox(height: 8), // 각 텍스트 필드 사이의 간격
+              // 문제 태그 선택
+              SectionText(text: '문제 태그', textColor: Colors.black),
+              const SizedBox(height: 8),
+              TextFormFieldCustom(
+                hintText: 'ex) 이산수학, C언어 등',
+                isPasswordField: false,
+                isReadOnly: false,
+                keyboardType: TextInputType.text,
+                textInputAction: TextInputAction.next,
+                validator: (value) => inputTagValidator(value),
+                controller: _tagController,
               ),
-              onChanged: (value) {
-                // 사용자가 입력한 내용 저장
-                problemtag = value;
-              },
-            ),
-          ],
+            ],
+          ),
         ),
         actions: [
-          TextButton(
+          ElevatedButtionCustom(
+            text: '취소',
+            backgroundColor: Colors.black,
+            textColor: Colors.white,
             onPressed: () {
               Navigator.of(context).pop(); // 팝업 닫기
             },
-            child: Text('취소'),
           ),
-          TextButton(
+          ElevatedButtionCustom(
+            text: '확인',
+            backgroundColor: Colors.black,
+            textColor: Colors.white,
             onPressed: () {
-              _saveToDatabase(content, problemType, problemtag); // 사용자 입력값 반환
+              _saveToDatabase(content, _typeController.text, _tagController.text); // 사용자 입력값
               Navigator.of(context).pop();
             },
-            child: Text('확인'),
           ),
         ],
       );
     },
   );
-
-  if (problemType != null) {
-    // 사용자가 확인을 선택하고 입력한 내용이 있을 때만 저장 처리
-    _saveToDatabase(content, problemType, problemtag); // 데이터베이스에 저장하는 함수 호출
-  }
 }
 
-Future<void> _saveToDatabase(String content, String? problemType, String? problemtag) async {
+inputTagValidator(value) {
+  if (value.isEmpty) {
+    return '태그를 입력해주세요';
+  }
+  return null;
+}
+
+inputTypeValidator(value) {
+  if (value.isEmpty) {
+    return '타입을 입력해주세요';
+  }
+  return null;
+}
+
+Future<void> _saveToDatabase(
+    String content, String problemType, String problemTag) async {
   var user = supabase.auth.currentUser;
   var response =
-      await supabase.from('user').select('id').eq('email', user!.email!);
+      await supabase.from('user').select('email').eq('email', user!.email!);
   var myInstance = _ChatScreenState();
   //int user_id = response![0]['id'];
 
@@ -424,8 +448,9 @@ Future<void> _saveToDatabase(String content, String? problemType, String? proble
           problem_ans: await myInstance._fetchResponse(content, 'solution'),
           problem_des: content,
           types: problemType!,
+          user_mail: response![0]['email'],
           // id: user_id,
-          tag: problemtag,
+          tag: problemTag!,
         ).toMap(),
       );
 }

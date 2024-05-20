@@ -5,6 +5,7 @@ class ProblemModel {
   String? tag;
   String types;
   DateTime? createdAt;
+  String user_mail;
 
   ProblemModel({
     this.id,
@@ -13,6 +14,7 @@ class ProblemModel {
     this.tag,
     required this.types,
     this.createdAt,
+    required this.user_mail,
   });
 
   Map<String, dynamic> toMap() {
@@ -20,6 +22,8 @@ class ProblemModel {
       'problem_des' : problem_des,
       'problem_ans' : problem_ans,
       'types' : types,
+      'user_mail' : user_mail,
+      'tag' : tag,
     };
   }
 
@@ -30,6 +34,7 @@ class ProblemModel {
       problem_ans: json['problem_ans'],
       tag: json['tag'],
       types: json['types'],
+      user_mail: json['user_mail'],
       createdAt: DateTime.parse(json['created_at']),
     );
   }
