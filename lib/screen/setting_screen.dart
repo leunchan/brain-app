@@ -42,7 +42,7 @@ class _SettingScreenState extends State<SettingScreen> {
             child: Column(
               children: [
                 // 프로필 이미지 표시
-                const SizedBox(height: 64),
+                const SizedBox(height: 90),
                 CircleAvatar(
                   backgroundImage: profileImgUrl != null
                       ? NetworkImage(profileImgUrl!)
@@ -56,14 +56,14 @@ class _SettingScreenState extends State<SettingScreen> {
                       : null, // 프로필 이미지가 있을 경우에는 아이콘 표시하지 않음
                   radius: 80,
                 ),
-                const SizedBox(height: 54),
+                const SizedBox(height: 80),
                 // 회원정보 수정 버튼
                 Container(
                   width: double.infinity,
-                  height: 52,
+                  height: 70,
                   child: ElevatedButtionCustom(
-                    text: ' ➡️ 회원정보 수정',
-                    backgroundColor: Color(0xff979797),
+                    text: '회원정보 수정',
+                    backgroundColor: Color(0xFFD9D9D9),
                     textColor: Colors.black,
                     onPressed: () {
                       // 회원정보 수정 화면 이동
@@ -75,10 +75,10 @@ class _SettingScreenState extends State<SettingScreen> {
                 // 로그아웃 버튼
                 Container(
                   width: double.infinity,
-                  height: 52,
+                  height: 70,
                   child: ElevatedButtionCustom(
-                    text: ' ➡️ 로그아웃',
-                    backgroundColor: Color(0xff979797),
+                    text: '로그아웃',
+                    backgroundColor: Color(0xFFD9D9D9),
                     textColor: Colors.black,
                     onPressed: () {
                       showCupertinoModalPopup<void>(
@@ -112,10 +112,10 @@ class _SettingScreenState extends State<SettingScreen> {
                 // 탈퇴 버튼 ---> 아직 구현못했어..
             Container(
               width: double.infinity,
-              height: 52,
+              height: 70,
               child: ElevatedButtionCustom(
-                text: '➡️ 탈퇴',
-                backgroundColor: Color(0xff979797),
+                text: '회원탈퇴',
+                backgroundColor: Color(0xFFD9D9D9),
                 textColor: Colors.black,
                 onPressed: () async {
                   // 1. 확인 다이얼로그 표시
