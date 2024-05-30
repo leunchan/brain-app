@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moonje_mate/screen/setting_screen.dart';
-import 'package:moonje_mate/screen/storage_screen.dart';
+import 'package:moonje_mate/screen/storage_date_screen.dart';
 
 import 'chat_screen.dart';
 
@@ -15,7 +15,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0; // 화면 선택 위치ㅓ
   List<Widget> _screenType = [
-    StorageScreen(),
+    StorageDateScreen(),
     ChatScreen(),
     SettingScreen(),
 

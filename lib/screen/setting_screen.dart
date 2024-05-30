@@ -47,7 +47,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   backgroundImage: profileImgUrl != null
                       ? NetworkImage(profileImgUrl!)
                       : null, // 기본 이미지는 설정하지 않음
-                  child: profileImgUrl == null
+                  child: profileImgUrl == 'assets/default_user_img.png'
                       ? Image.asset(
                           'assets/default_user_img.png',
                           width: 120,
@@ -109,7 +109,6 @@ class _SettingScreenState extends State<SettingScreen> {
                   ),
                 ),
                 const SizedBox(height: 44),
-                // 탈퇴 버튼 ---> 아직 구현못했어..
             Container(
               width: double.infinity,
               height: 70,

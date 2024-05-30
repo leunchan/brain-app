@@ -100,7 +100,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         // 사용자 정보 가져오기
                         UserModel? userInfo = await getUserInfo(emailValue);
-                        // 회원탈퇴 시 authentication에서 지워지는 걸 못해서 일단 이렇게 구현해뒀어 차차 구현해볼게
                         // 닉네임 변수 확인
                         if (userInfo == null || userInfo.nickname == null || userInfo.nickname.isEmpty) {
                           // 사용자 정보가 없거나 닉네임 변수가 비어 있는 경우 로그인 실패 처리

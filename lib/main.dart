@@ -6,7 +6,7 @@ import 'package:moonje_mate/screen/main_screen.dart';
 import 'package:moonje_mate/screen/register_screen.dart';
 import 'package:moonje_mate/screen/setting_screen.dart';
 import 'package:moonje_mate/screen/splash_screen.dart';
-import 'package:moonje_mate/screen/storage_screen.dart';
+import 'package:moonje_mate/screen/storage_date_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 
@@ -37,8 +37,9 @@ class MyApp extends StatelessWidget {
       ),
       // 아직 출시가 안된 앱을 테스트 할때는 이걸 끄고 하는게 좋음
       debugShowCheckedModeBanner: false,
-      // 앱 최초에 어떤 화면을 쓸거니
+      // 앱 최초에 어떤 화면을 쓸것인가
       initialRoute: '/',
+      // 각 페이지 라우트
       routes: {
         '/': (context) => SplashScreen(),
         '/login': (context) => LoginScreen(),
@@ -46,12 +47,9 @@ class MyApp extends StatelessWidget {
         '/main': (context) => MainScreen(),
         '/chat': (context) => ChatScreen(),
         '/setting': (context) => SettingScreen(),
-        '/storage': (context) => StorageScreen(),
+        '/storage_date': (context) => StorageDateScreen(),
         '/client': (context) => ClientInfoScreen()
       },
-
-      // 다른 방법으로 라우트 선언을 한 것
-
     );
   }
 }
