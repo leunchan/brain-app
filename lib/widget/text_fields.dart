@@ -54,7 +54,7 @@ class _TextFormFieldCustomState extends State<TextFormFieldCustom> {
         /// 그냥 border 값을 어떻게 할것인가
         border: OutlineInputBorder(
           borderSide: BorderSide(
-            width: 2,
+            width: 4,
             color: Colors.black,
           ),
           borderRadius: BorderRadius.circular(4),
@@ -64,7 +64,7 @@ class _TextFormFieldCustomState extends State<TextFormFieldCustom> {
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(
             width: 2,
-            color: Colors.black,
+            color: Color(0xff70b9db),
           ),
           borderRadius: BorderRadius.circular(4),
         ),

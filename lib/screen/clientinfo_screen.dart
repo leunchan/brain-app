@@ -77,7 +77,7 @@ class _ClientInfoState extends State<ClientInfoScreen> {
                     ),
                     SizedBox(height: 20.0),
                     Container(
-                      width: 180,
+                      width: double.infinity,
                       height: 32,
                       child: ElevatedButtionCustom(
                         text: '프로필 사진 변경',

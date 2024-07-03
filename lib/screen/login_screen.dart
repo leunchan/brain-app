@@ -36,13 +36,16 @@ class _LoginScreenState extends State<LoginScreen> {
                 const Center(
                   child: Text(
                     '문제메이트',
-                    style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontSize: 50,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 53),
 
                 /// 이메일
-                SectionText(text: '이메일', textColor: Color(0xff979797)),
+                SectionText(text: '이메일', textColor: Colors.black),
                 const SizedBox(height: 8),
                 TextFormFieldCustom(
                   isPasswordField: false,
@@ -56,7 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 24),
 
                 /// 비밀번호
-                SectionText(text: '비밀번호', textColor: Color(0xff979797)),
+                SectionText(text: '비밀번호', textColor: Colors.black),
                 const SizedBox(height: 8),
                 TextFormFieldCustom(
                   // 이걸 해줘야 비밀번호가 뜬다하심
@@ -76,9 +79,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   width: double.infinity,
                   height: 52,
                   child: ElevatedButtionCustom(
-                    text: '로그인',
-                    backgroundColor: Colors.black,
-                    textColor: Colors.white,
+                      text: '로그인',
+                      backgroundColor: Color(0xff70b9db),
+                      textColor: Colors.white,
                       onPressed: () async {
                         // 로그인
                         String emailValue = _emailController.text;
@@ -90,7 +93,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         }
 
                         // 이메일과 비밀번호로 로그인 시도
-                        bool isLoginSuccess = await loginWithEmail(emailValue, passwordValue);
+                        bool isLoginSuccess =
+                            await loginWithEmail(emailValue, passwordValue);
 
                         if (!context.mounted) return;
                         if (!isLoginSuccess) {
@@ -101,7 +105,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         // 사용자 정보 가져오기
                         UserModel? userInfo = await getUserInfo(emailValue);
                         // 닉네임 변수 확인
-                        if (userInfo == null || userInfo.nickname == null || userInfo.nickname.isEmpty) {
+                        if (userInfo == null ||
+                            userInfo.nickname == null ||
+                            userInfo.nickname.isEmpty) {
                           // 사용자 정보가 없거나 닉네임 변수가 비어 있는 경우 로그인 실패 처리
                           showSnackBar(context, '로그인을 실패하였습니다. 닉네임이 없습니다.');
                           return;
@@ -110,8 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         // 로그인을 성공하여 메인으로 이동
                         // 로그인 화면을 죽여주고 가야하기때문에 popAndPushNamed 사용
                         Navigator.popAndPushNamed(context, '/main');
-                      }
-                  ),
+                      }),
                 ),
 
                 const SizedBox(height: 16),
@@ -122,7 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 52,
                   child: ElevatedButtionCustom(
                     text: '회원가입',
-                    backgroundColor: Color(0xff979797),
+                    backgroundColor: Color(0xffa3a3a3),
                     textColor: Colors.white,
                     onPressed: () {
                       // 회원가입 화면 이동
@@ -137,21 +142,23 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+
   Future<UserModel?> getUserInfo(String email) async {
     // Supabase 클라이언트 생성
-    final supabaseClient = SupabaseClient('https://sdncltappldozngyrnhu.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkbmNsdGFwcGxkb3puZ3lybmh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTE3MTM2MjAsImV4cCI6MjAyNzI4OTYyMH0.g2UQuA4z6T8_KUoAJve-uI4Ps31cD8ZD0s9vKQtTDx0');
+    final supabaseClient = SupabaseClient(
+        'https://sdncltappldozngyrnhu.supabase.co',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkbmNsdGFwcGxkb3puZ3lybmh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTE3MTM2MjAsImV4cCI6MjAyNzI4OTYyMH0.g2UQuA4z6T8_KUoAJve-uI4Ps31cD8ZD0s9vKQtTDx0');
 
     // 사용자 정보 가져오기
-    final response = await supabaseClient.from('user')
-        .select()
-        .eq('email', email)
-        .single();
+    final response =
+        await supabaseClient.from('user').select().eq('email', email).single();
 
     // 가져온 사용자 정보를 UserInfo 모델로 변환하여 반환
-      // 정상적으로 사용자 정보를 가져온 경우
-      final userData = response as Map<String, dynamic>;
-      return UserModel.fromJson(userData);
+    // 정상적으로 사용자 정보를 가져온 경우
+    final userData = response as Map<String, dynamic>;
+    return UserModel.fromJson(userData);
   }
+
   inputEmailValidator(value) {
     /// 이메일 필드 검증 함수
     if (value.isEmpty) {
@@ -171,8 +178,8 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<bool> loginWithEmail(String emailValue, String passwordValue) async {
     // 이메일 로그인 (수파베이스)
     bool isLoginSuccess = false;
-    final AuthResponse response = await supabase.auth.signInWithPassword(
-        email: emailValue, password: passwordValue);
+    final AuthResponse response = await supabase.auth
+        .signInWithPassword(email: emailValue, password: passwordValue);
     if (response.user! != null) {
       isLoginSuccess = true;
     } else {

@@ -18,6 +18,7 @@ dependencies:
   image_picker: ^1.0.7 # 이미지 데이터 가져오기 라이브러리
   intl: ^0.19.0 # DateFormat을 활용할 수 있는 라이브러리
   http: ^1.2.1 # http 라이브러리
+  multiple_images_picker: ^1.0.1 # 여러개 이미지 선택
 
 dev_dependencies:
   flutter_test:
@@ -30,5 +31,15 @@ flutter:
   assets:
     - assets/
   uses-material-design: true
+  fonts:
+    - family: Jalnan
+      fonts:
+        - asset: assets/Jalnan2TTF.ttf
+    - family: Kotra
+      fonts:
+        - asset: assets/KOTRA_BOLD.ttf
+    - family: Gmarket
+      fonts:
+        - asset: assets/GmarketSansTTFMedium.ttf
 
 

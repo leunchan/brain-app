@@ -15,7 +15,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0; // 화면 선택 위치ㅓ
   List<Widget> _screenType = [
-    StorageDateScreen(),
+    StorageScreen(),
     ChatScreen(),
     SettingScreen(),
 

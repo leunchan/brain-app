@@ -32,8 +32,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
+        fontFamily: 'Gmarket',
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
         useMaterial3: true,
+        cardColor: Color(0xff70b9db),
       ),
       // 아직 출시가 안된 앱을 테스트 할때는 이걸 끄고 하는게 좋음
       debugShowCheckedModeBanner: false,
@@ -47,8 +49,8 @@ class MyApp extends StatelessWidget {
         '/main': (context) => MainScreen(),
         '/chat': (context) => ChatScreen(),
         '/setting': (context) => SettingScreen(),
-        '/storage_date': (context) => StorageDateScreen(),
-        '/client': (context) => ClientInfoScreen()
+        '/storage': (context) => StorageScreen(),
+        '/client': (context) => ClientInfoScreen(),
       },
     );
   }

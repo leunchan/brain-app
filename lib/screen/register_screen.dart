@@ -353,7 +353,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       isRegisterSuccess = true;
 
       //1. 프로필 사진을 등록했다면 업로드 처리
-
       DateTime nowTime = DateTime.now();
 
       String? imageUrl;
